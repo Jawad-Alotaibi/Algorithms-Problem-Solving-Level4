@@ -4,10 +4,10 @@ using namespace std;
 namespace MyInputLibrary
 {
 
-    int readNumber()
+    int readNumber(string message)
     {
         int number;
-        // cout << "Enter Number please\n";
+         cout << message << endl;
         // when the cin object read from the screen anything rather than numbers it will fail
         cin >> number;
 
@@ -15,7 +15,7 @@ namespace MyInputLibrary
         {
             cin.clear();
             // it will ignore the input at any size until it found \n
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
             cout << "Enter a valid number please\n";
             cin >> number;
         }
