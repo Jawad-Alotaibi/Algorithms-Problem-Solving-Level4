@@ -19,6 +19,10 @@ bool isLeapYear(int year)
 
 int numberOfDaysInMonth(int month, int year)
 {
+// الفكرة الي بسويها اني اسوي اراي فيها ١٢ عنصر وكل عنصر يمثل عدد ايام الاشهر ويصير ارجع اليوم بناء على الشهر
+   // return (month < 1 || month > 12 ? 0 : ) || (month == 2 ? isLeapYear(year) : 29);
+
+
     if (month < 1 || month > 12)
     {
         return 0;
