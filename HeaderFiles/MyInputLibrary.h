@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include "DateLibrary.h"
+
 using namespace std;
 namespace MyInputLibrary
 {
@@ -7,7 +9,7 @@ namespace MyInputLibrary
     int readNumber(string message)
     {
         int number;
-         cout << message << endl;
+        cout << message << endl;
         // when the cin object read from the screen anything rather than numbers it will fail
         cin >> number;
 
@@ -55,8 +57,6 @@ namespace MyInputLibrary
         return s1;
     }
 
-    
-
     int readInRange(int from, int to, string message)
     {
         int number;
@@ -68,5 +68,20 @@ namespace MyInputLibrary
         } while (number < from || number > to);
 
         return number;
+    }
+
+    DateLibrary::stDate ReadFullDate()
+    {
+        DateLibrary::stDate Date;
+        cout << "Enter a Day?\n";
+        cin >> Date.day;
+
+        cout << "Enter a Month?\n";
+        cin >> Date.month;
+
+        cout << "Enter a Year?\n";
+        cin >> Date.year;
+
+        return Date;
     }
 }

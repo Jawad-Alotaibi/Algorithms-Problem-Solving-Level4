@@ -1,12 +1,18 @@
 #pragma once
 
 #include <iostream>
-#include "MyInputLibrary.h"
 
 using namespace std;
 
 namespace DateLibrary
 {
+
+    struct stDate
+    {
+        int day;
+        int month;
+        int year;
+    };
 
     string formatDate(int year, int month, int day)
     {
@@ -104,25 +110,25 @@ namespace DateLibrary
             PrintMonthCalender(i, year);
         }
     }
-    //My Solution
-    // int TotalNumberOfDaysFromSpecificDate(short year, short month, short day)
-    // {
-    //     short totalDays = 0;
-    //     short numberOfDaysInMonth = 0;
-    //     for (short i = 1; i <= month; i++)
-    //     {
-    //         if (i == month)
-    //         {
-    //             totalDays += day;
-    //             break;
-    //         }
-    //         totalDays += NumberOfDaysInMonth(year, i);
-    //     }
-        
+    // My Solution
+    //  int TotalNumberOfDaysFromSpecificDate(short year, short month, short day)
+    //  {
+    //      short totalDays = 0;
+    //      short numberOfDaysInMonth = 0;
+    //      for (short i = 1; i <= month; i++)
+    //      {
+    //          if (i == month)
+    //          {
+    //              totalDays += day;
+    //              break;
+    //          }
+    //          totalDays += NumberOfDaysInMonth(year, i);
+    //      }
+
     //     return totalDays;
     // }
 
-    int TotalNumberOfDaysFromSpecificDate(short year, short month, short day)
+    int NumberOfDaysFromTheBeginingOfTheYear(short year, short month, short day)
     {
         short totalDays = 0;
         for (short i = 1; i < month; i++)
@@ -133,5 +139,99 @@ namespace DateLibrary
         totalDays += day;
 
         return totalDays;
+    }
+
+    stDate GetDateFromDayOrderInYear(int DayOrderInYear, int year)
+    {
+        stDate Date;
+        short remainingDays = DayOrderInYear;
+        short monthDays = 0;
+
+        Date.year = year;
+        Date.month = 1;
+        while (true)
+        {
+            monthDays = NumberOfDaysInMonth(year, Date.month);
+
+            if (remainingDays > monthDays)
+            {
+                remainingDays -= monthDays;
+                Date.month++;
+            }
+            else
+            {
+                Date.day = remainingDays;
+                break;
+            }
+        }
+        return Date;
+    }
+
+    stDate GetDateAfterAddingDays(short daysToAdd, stDate Date)
+    {
+        // Add Days to certain Date
+        short remainingDays = daysToAdd + NumberOfDaysFromTheBeginingOfTheYear(Date.year, Date.month, Date.day);
+        short monthDays = 0;
+
+        Date.month = 1;
+
+        while (true)
+        {
+            monthDays = NumberOfDaysInMonth(Date.year, Date.month);
+
+            if (remainingDays > monthDays)
+            {
+                remainingDays -= monthDays;
+                Date.month++;
+
+                if (Date.month > 12)
+                {
+                    Date.month = 1;
+                    Date.year++;
+                }
+            }
+            else
+            {
+                Date.day = remainingDays;
+                break;
+            }
+        }
+        return Date;
+    }
+
+    bool CheckDate1LessThanDate2(stDate date1, stDate date2)
+    {
+
+        if (date2.year > date1.year)
+        {
+            return true;
+        }
+        if (date1.year > date2.year)
+        {
+            return false;
+        }
+        if (date2.year == date1.year)
+        {
+            if (date2.month > date1.month)
+            {
+                return true;
+            }
+            else if (date1.month > date2.month)
+            {
+                return false;
+            }
+            else
+            {
+                if (date2.day > date1.day)
+                {
+                    return true;
+                }
+                if (date1.day > date2.day)
+                {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }
