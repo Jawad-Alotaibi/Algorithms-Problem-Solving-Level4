@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <ctime>
 
 using namespace std;
 
@@ -201,37 +202,76 @@ namespace DateLibrary
 
     bool CheckDate1LessThanDate2(stDate date1, stDate date2)
     {
+        return (date1.year < date2.year) ? true : ((date1.year == date2.year) ? (date1.month < date2.month ? true : (date1.month == date2.month ? date1.day < date2.day : false)) : false);
+    }
 
-        if (date2.year > date1.year)
+    bool isDatesEqualEachOther(stDate date1, stDate date2)
+    {
+        return (date1.year == date2.year) ? (date1.month == date2.month ? date1.day == date2.day : false) : false;
+    }
+
+    bool isLastDayInMonth(stDate date)
+    {
+        return (NumberOfDaysInMonth(date.year, date.month) == date.day);
+    }
+
+    bool isLastMonthInYear(short month)
+    {
+        return (month == 12);
+    }
+
+    stDate IncreaseDateByOneDay(stDate date)
+    {
+        if (isLastDayInMonth(date))
         {
-            return true;
-        }
-        if (date1.year > date2.year)
-        {
-            return false;
-        }
-        if (date2.year == date1.year)
-        {
-            if (date2.month > date1.month)
+            if (isLastMonthInYear(date.month))
             {
-                return true;
-            }
-            else if (date1.month > date2.month)
-            {
-                return false;
+                date.year++;
+                date.day = 1;
+                date.month = 1;
             }
             else
             {
-                if (date2.day > date1.day)
-                {
-                    return true;
-                }
-                if (date1.day > date2.day)
-                {
-                    return false;
-                }
+                date.month++;
+                date.day = 1;
             }
         }
-        return false;
+        else
+            date.day++;
+            
+        return date;
+    }
+
+    int CalculateDifferenceInDays(stDate date1, stDate date2, bool includeEndDays = false)
+    {
+        int days = 0;
+        while (CheckDate1LessThanDate2(date1, date2))
+        {
+           date1 =  IncreaseDateByOneDay(date1);
+            days++;
+        }
+        
+        return includeEndDays ? ++days : days;
+    }
+
+    stDate GetSystemDate()
+    {
+        stDate date;
+
+        time_t t = time(0); // get time now
+
+        tm* now = localtime(&t);
+
+        date.day = now->tm_mday;
+        date.month = now->tm_mon + 1;
+        date.year = now->tm_year + 1900; // add 1900 because the number of the year start counting after 1900 like 231 years after 1900 to get the correct year we need them add them up
+
+        return date;
+    }
+    int CalculateAgeInDays(stDate myBirthday)
+    {
+        stDate currentDate = GetSystemDate();
+
+        return CalculateDifferenceInDays(myBirthday, currentDate);
     }
 }
