@@ -238,29 +238,87 @@ namespace DateLibrary
         }
         else
             date.day++;
-            
+
         return date;
     }
 
+    // Those three functions used to solve the problem of handling two dates the first greater than the second dates the difference must be in minus, i solved it using those three functions
+    // Then i solved it using abo-hadhoud solutions
+    //   bool isFirstDayInMonth(stDate date)
+    //  {
+    //      return (1 == date.day);
+    //  }
+
+    // bool isFirstMonthInYear(short month)
+    // {
+    //     return (month == 1);
+    // }
+
+    // stDate DecreaseDateByOneDay(stDate date)
+    // {
+    //     if (isFirstDayInMonth(date))
+    //     {
+    //         if (isFirstMonthInYear(date.month))
+    //         {
+    //             date.year--;
+    //             date.month = 12;
+    //             date.day = NumberOfDaysInMonth(date.year, date.month);
+    //         }
+    //         else
+    //         {
+    //             date.month--;
+    //             date.day = NumberOfDaysInMonth(date.year, date.month);
+    //         }
+    //     }
+    //     else
+    //         date.day--;
+
+    //     return date;
+    // }
+
+    void SwapDates(stDate &date1, stDate &date2)
+    {
+        stDate tempDate;
+
+        tempDate.day = date1.day;
+        tempDate.month = date1.month;
+        tempDate.year = date1.year;
+
+        date1.day = date2.day;
+        date1.month = date2.month;
+        date1.year = date2.year;
+
+        date2.day = tempDate.day;
+        date2.month = tempDate.month;
+        date2.year = tempDate.year;
+    }
     int CalculateDifferenceInDays(stDate date1, stDate date2, bool includeEndDays = false)
     {
         int days = 0;
+        short swapFlag = 1;
+
+        // Handle the case if the first Date after the second date
+        if (!CheckDate1LessThanDate2(date1, date2))
+        {
+            SwapDates(date1, date2);
+            swapFlag = -1;
+        }
+
         while (CheckDate1LessThanDate2(date1, date2))
         {
-           date1 =  IncreaseDateByOneDay(date1);
+            date1 = IncreaseDateByOneDay(date1);
             days++;
         }
-        
-        return includeEndDays ? ++days : days;
+
+        return includeEndDays ? ++days * swapFlag : days * swapFlag;
     }
 
     stDate GetSystemDate()
     {
         stDate date;
-
         time_t t = time(0); // get time now
 
-        tm* now = localtime(&t);
+        tm *now = localtime(&t);
 
         date.day = now->tm_mday;
         date.month = now->tm_mon + 1;
@@ -274,4 +332,267 @@ namespace DateLibrary
 
         return CalculateDifferenceInDays(myBirthday, currentDate);
     }
-}
+
+    stDate IncreaseDateByXDays(stDate date, short days)
+    {
+        for (short i = 1; i <= days; i++)
+        {
+            date = IncreaseDateByOneDay(date);
+        }
+
+        return date;
+    }
+
+    stDate IncreaseDateByOneWeek(stDate date)
+    {
+        for (short i = 1; i <= 7; i++)
+        {
+            date = IncreaseDateByOneDay(date);
+        }
+
+        return date;
+    }
+
+    stDate IncreaseDateByXWeeks(stDate date, short weeks)
+    {
+        for (short i = 1; i <= weeks; i++)
+        {
+            date = IncreaseDateByOneWeek(date);
+        }
+
+        return date;
+    }
+
+    stDate IncreaseDateByOneMonth(stDate date)
+    {
+        if (date.month == 12) // check if the current month is the last month in the year
+        {
+            date.year++;
+            date.month = 1;
+        }
+        else
+        {
+            date.month++;
+        }
+
+        // the last case to handle if i am 31/1/2022 should not be 31/2/2022 because the last day in the second month is 28 not 31 !
+        int numeberOfDaysInCurrentMonth = NumberOfDaysInMonth(date.year, date.month);
+        if (date.day > numeberOfDaysInCurrentMonth)
+        {
+            date.day = numeberOfDaysInCurrentMonth;
+        }
+
+        return date;
+    }
+
+    stDate IncreaseDateByXMonths(stDate date, short months)
+    {
+        for (short i = 1; i <= months; i++)
+        {
+            date = IncreaseDateByOneMonth(date);
+        }
+
+        return date;
+    }
+
+    stDate IncreaseDateByOneYear(stDate date)
+    {
+        date.year++;
+        return date;
+    }
+
+    stDate IncreaseDateByXYears(stDate date, short years)
+    {
+        for (short i = 1; i <= years; i++)
+        {
+            date = IncreaseDateByOneYear(date);
+        }
+
+        return date;
+    }
+
+    stDate IncreaseDateByXYearsFaster(stDate date, short years)
+    {
+        date.year += years;
+        return date;
+    }
+
+    stDate IncreaseDateByOneDecade(stDate date)
+    {
+        date.year += 10;
+        return date;
+    }
+
+    stDate IncreaseDateByXDecades(stDate date, short numberOfDecades)
+    {
+        for (short i = 1; i <= numberOfDecades; i++)
+        {
+            date = IncreaseDateByOneDecade(date);
+        }
+
+        return date;
+    }
+
+    stDate IncreaseDateByXDecadesFaster(stDate date, short numberOfDecades)
+    {
+        date.year = date.year + (numberOfDecades * 10);
+        return date;
+    }
+
+    stDate IncreaseDateByOneCentury(stDate date)
+    {
+        date.year += 100;
+        return date;
+    }
+
+    stDate IncreaseDateByOneMillennium(stDate date)
+    {
+        date.year += 1000;
+        return date;
+    }
+
+    bool IsFirstMonthInYear(stDate date)
+    {
+        return (date.month == 1);
+    }
+
+    bool IsFirstDayInMonth(stDate date)
+    {
+        return (date.day == 1);
+    }
+    stDate DecreaseDateByOneDay(stDate date)
+    {
+        if (IsFirstDayInMonth(date))
+        {
+            if (IsFirstMonthInYear(date))
+            {
+                date.year--;
+                date.month = 12;
+                date.day = NumberOfDaysInMonth(date.year, date.month);
+            }
+            else
+            {
+                date.month--;
+                date.day = NumberOfDaysInMonth(date.year, date.month);
+            }
+        }
+        else
+            date.day--;
+
+        return date;
+    }
+
+    stDate DecreasingDateByXDays(stDate date, short numberOfDays)
+    {
+        for (short i = 1; i <= numberOfDays; i++)
+        {
+            date = DecreaseDateByOneDay(date);
+        }
+        return date;
+    }
+
+    stDate DecreasingDateByOneWeek(stDate date)
+    {
+        for (short i = 1; i <= 7; i++)
+        {
+            date = DecreaseDateByOneDay(date);
+        }
+
+        return date;
+    }
+
+    stDate DecreasingDateByXWeeks(stDate date, short numberOfWeeks)
+    {
+        for (short i = 1; i <= numberOfWeeks; i++)
+        {
+            date = DecreasingDateByOneWeek(date);
+        }
+
+        return date;
+    }
+
+    stDate DecreaseDateByOneMonth(stDate date)
+    {
+        // i need to handle the case if i decrease one month to make the date corerect with the number of days of the previous month if i am 30/3 and decrease month it check if it is leap year it will be 29/2 if not 28/2
+        if (date.month == 1)
+        {
+            date.year--;
+            date.month = 12;
+        }
+        else
+            date.month--;
+
+        // Handle the case of the number of days of the previous month
+        int numberOfDaysOfTheCurrentMonth = NumberOfDaysInMonth(date.year, date.month);
+
+        if (date.day > numberOfDaysOfTheCurrentMonth)
+        {
+            date.day = numberOfDaysOfTheCurrentMonth;
+        }
+
+        return date;
+    }
+
+    stDate DecreaseDateByXMonth(stDate date, int numberOfMonths)
+    {
+        for (short i = 1; i <= numberOfMonths; i++)
+        {
+            date = DecreaseDateByOneMonth(date);
+        }
+
+        return date;
+    }
+
+    stDate DecreaseDateByOneYear(stDate date)
+    {
+        date.year--;
+        return date;
+    }
+    stDate DecreaseDateByXYears(stDate date, short numberOfYears)
+    {
+        for (short i = 1; i <= numberOfYears; i++)
+        {
+            date = DecreaseDateByOneYear(date);
+        }
+
+        return date;
+    }
+    stDate DecreaseDateByXYearsFaster(stDate date, short numberOfYears)
+    {
+        date.year -= numberOfYears;
+        return date;
+    }
+
+    stDate DecreaseDateByOneDecade(stDate date)
+    {
+        date.year -= 10;
+        return date;
+    }
+
+    stDate DecreaseDateByXDecades(stDate date, short numberOfDecades)
+    {
+        for (short i = 0; i < numberOfDecades; i++)
+        {
+            date = DecreaseDateByOneDecade(date);
+        }
+
+        return date;
+    }
+
+    stDate DecreaseDateByXDecadesFaster(stDate date, short numberOfDecades)
+    {
+        date.year = date.year - (numberOfDecades * 10);
+        return date;
+    }
+
+    stDate DecreaseDateByOneCentury(stDate date)
+    {
+        date.year -= 100;
+        return date;
+    }
+
+    stDate DecreaseDateByOneMillennium(stDate date)
+    {
+        date.year -= 1000;
+        return date;
+    }}
